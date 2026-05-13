@@ -21,7 +21,8 @@ const mockSummary = {
   approvals: [{ id: 'appr_upgrade', action: 'task.run', status: 'pending', risk: 'high' }],
 };
 
-const API_BASE = localStorage.getItem('hmnApiBase') || window.HMN_API_BASE || 'http://127.0.0.1:8765';
+const defaultApiBase = `${window.location.protocol}//${window.location.hostname}:8765`;
+const API_BASE = localStorage.getItem('hmnApiBase') || window.HMN_API_BASE || defaultApiBase;
 
 function progress(value, tone = '') {
   return `<div class="progress"><i class="${tone}" style="width:${Math.max(2, Number(value) || 0)}%"></i></div>`;
