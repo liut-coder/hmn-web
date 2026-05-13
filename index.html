@@ -26,12 +26,8 @@
           </div>
           <button>接入新节点</button>
         </header>
-        <div class="metrics">
-          <section class="metric-card"><div class="metric-icon">↗</div><div><p>在线节点</p><strong>4/5</strong><span>最近 5 分钟心跳</span></div></section>
-          <section class="metric-card"><div class="metric-icon">✓</div><div><p>托管节点</p><strong>4</strong><span>1 个待清理/确认</span></div></section>
-          <section class="metric-card"><div class="metric-icon">!</div><div><p>待审批</p><strong>1</strong><span>高风险动作需确认</span></div></section>
-          <section class="metric-card"><div class="metric-icon">▶</div><div><p>运行任务</p><strong>1</strong><span>worker pull 队列</span></div></section>
-        </div>
+        <div class="api-status" id="api-status">核心 API 连接中…</div>
+        <div class="metrics" id="metrics"></div>
         <div class="layout">
           <section class="panel wide">
             <header><h2>节点探针</h2><span>CPU / 内存 / 磁盘 / 心跳</span></header>
@@ -45,19 +41,11 @@
           </section>
           <section class="panel">
             <header><h2>最近任务</h2><span>审批/执行状态</span></header>
-            <div class="tasks">
-              <div class="task"><div><b>heartbeat + facts</b><span>brarm · 2 分钟前</span></div><em>成功</em></div>
-              <div class="task"><div><b>docs sync dry-run</b><span>BeroNas · 5 分钟前</span></div><em>运行中</em></div>
-              <div class="task"><div><b>system upgrade</b><span>worker-d2 · 12 分钟前</span></div><em class="high">待审批</em></div>
-            </div>
+            <div class="tasks" id="tasks"></div>
           </section>
           <section class="panel">
             <header><h2>容量风险</h2><span>来自 worker facts</span></header>
-            <div class="risk-list">
-              <div><span>BeroNas</span><div class="progress"><i class="amber" style="width:74%"></i></div><b>74%</b></div>
-              <div><span>brarm</span><div class="progress"><i style="width:21%"></i></div><b>21%</b></div>
-              <div><span>worker-d2</span><div class="progress"><i style="width:33%"></i></div><b>33%</b></div>
-            </div>
+            <div class="risk-list" id="risk-list"></div>
           </section>
         </div>
       </section>
