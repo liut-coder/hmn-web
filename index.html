@@ -1,55 +1,107 @@
 <!doctype html>
-<html lang="zh-CN">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>HMN Web</title>
-    <link rel="stylesheet" href="/src/styles.css" />
-  </head>
-  <body>
-    <main>
-      <aside>
-        <div class="brand"><span>H</span><div><b>HMN Web</b><small>Managed Network Console</small></div></div>
-        <nav>
-          <a class="active">总览</a>
-          <a>节点</a>
-          <a>任务</a>
-          <a>审批</a>
-          <a>网络</a>
-        </nav>
-      </aside>
-      <section class="content">
-        <header class="topbar">
-          <div>
-            <p>借鉴 Komari 的探针视图，但面向 HMN 托管、审批、任务和资产闭环。</p>
-            <h1>节点状态总览</h1>
-          </div>
-          <button>接入新节点</button>
-        </header>
-        <div class="api-status" id="api-status">核心 API 连接中…</div>
-        <div class="metrics" id="metrics"></div>
-        <div class="layout">
-          <section class="panel wide">
-            <header><h2>节点探针</h2><span>CPU / 内存 / 磁盘 / 心跳</span></header>
-            <div class="nodes" id="nodes"></div>
-          </section>
-          <section class="panel">
-            <header><h2>网络流量</h2><span>聚合视图</span></header>
-            <div class="bar-chart">
-              <i style="height:40%"></i><i style="height:70%"></i><i style="height:52%"></i><i style="height:88%"></i><i style="height:60%"></i><i style="height:95%"></i>
-            </div>
-          </section>
-          <section class="panel">
-            <header><h2>最近任务</h2><span>审批/执行状态</span></header>
-            <div class="tasks" id="tasks"></div>
-          </section>
-          <section class="panel">
-            <header><h2>容量风险</h2><span>来自 worker facts</span></header>
-            <div class="risk-list" id="risk-list"></div>
-          </section>
+<html class="dark" lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HMN Web | Infrastructure Control</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary: '#cfbcff',
+            accent: '#5e6ad2',
+            background: '#08090a',
+            surface: '#0f1011',
+            panel: '#141218',
+            muted: '#948e9c',
+            line: '#1f2023',
+            success: '#10b981',
+            warning: '#f59e0b',
+            danger: '#ef4444'
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+            mono: ['JetBrains Mono', 'ui-monospace', 'monospace']
+          }
+        }
+      }
+    };
+  </script>
+  <link rel="stylesheet" href="/src/styles.css?v=202605131135" />
+</head>
+<body class="bg-background text-[#e6e0e9] font-sans overflow-hidden">
+  <div id="mobile-scrim" class="mobile-scrim" aria-hidden="true"></div>
+  <div class="flex h-screen w-full">
+    <aside id="sidebar" class="fixed left-0 top-0 bottom-0 z-50 flex w-64 flex-col border-r border-line bg-[#0f0d13] p-6">
+      <div class="mb-10 flex items-center gap-3">
+        <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-[#22005d]">
+          <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1">hub</span>
         </div>
-      </section>
+        <div>
+          <h1 class="text-xl font-extrabold leading-none text-white">HMN Web</h1>
+          <p class="mt-1 text-[10px] uppercase tracking-[0.18em] text-muted">Infrastructure Control</p>
+        </div>
+      </div>
+
+      <nav id="side-nav" class="flex-1 space-y-1">
+        <button data-page="overview" class="nav-item active"><span class="material-symbols-outlined">dashboard</span><span>总览</span></button>
+        <button data-page="nodes" class="nav-item"><span class="material-symbols-outlined">developer_board</span><span>节点</span></button>
+        <button data-page="tasks" class="nav-item"><span class="material-symbols-outlined">assignment</span><span>任务</span></button>
+        <button data-page="approvals" class="nav-item"><span class="material-symbols-outlined">verified_user</span><span>审批</span><span id="approval-count" class="ml-auto rounded-full bg-red-500/15 px-2 py-0.5 text-[10px] text-red-200">0</span></button>
+        <button data-page="services" class="nav-item"><span class="material-symbols-outlined">dns</span><span>服务资产</span></button>
+        <button data-page="join" class="nav-item"><span class="material-symbols-outlined">group_add</span><span>接入节点</span></button>
+        <button data-page="backup" class="nav-item"><span class="material-symbols-outlined">backup</span><span>备份恢复</span></button>
+        <button data-page="network" class="nav-item"><span class="material-symbols-outlined">lan</span><span>网络 ACL</span></button>
+        <button data-page="components" class="nav-item"><span class="material-symbols-outlined">widgets</span><span>组件</span></button>
+        <button data-page="headscale" class="nav-item"><span class="material-symbols-outlined">vpn_lock</span><span>Headscale</span></button>
+        <button data-page="docs" class="nav-item"><span class="material-symbols-outlined">description</span><span>文档中心</span></button>
+        <button data-page="themes" class="nav-item"><span class="material-symbols-outlined">palette</span><span>主题</span></button>
+        <button data-page="permissions" class="nav-item"><span class="material-symbols-outlined">admin_panel_settings</span><span>账户权限</span></button>
+        <button data-page="skills" class="nav-item"><span class="material-symbols-outlined">psychology</span><span>Hermes 技能</span></button>
+        <button data-page="conversations" class="nav-item"><span class="material-symbols-outlined">forum</span><span>Hermes 对话</span></button>
+        <button data-page="platform" class="nav-item"><span class="material-symbols-outlined">tune</span><span>平台配置</span></button>
+      </nav>
+
+      <button id="new-request" class="mb-6 flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-[#22005d] transition hover:brightness-110">
+        <span class="material-symbols-outlined text-[18px]">add</span>新任务
+      </button>
+      <div class="border-t border-line pt-4">
+        <div class="flex items-center gap-3">
+          <div class="flex h-10 w-10 items-center justify-center rounded-full border border-line bg-[#1d1b20] text-xs font-bold">HMN</div>
+          <div class="min-w-0 flex-1">
+            <p class="truncate text-xs font-semibold uppercase tracking-wide text-white">ADMIN_CLUSTER_01</p>
+            <p id="api-status" class="truncate text-[11px] text-muted">API 连接中…</p>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <main class="ml-64 flex h-full flex-1 flex-col bg-background">
+      <header class="sticky top-0 z-40 flex h-16 items-center justify-between border-b border-line bg-panel/80 px-8 backdrop-blur-md">
+        <div class="flex min-w-0 items-center gap-4 md:gap-8">
+          <button id="mobile-menu" class="icon-btn mobile-menu-btn" title="菜单"><span class="material-symbols-outlined">menu</span></button>
+          <h2 id="page-title" class="text-xl font-bold text-white">总览</h2>
+          <div class="relative hidden w-80 md:block">
+            <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[18px] text-muted">search</span>
+            <input id="search-input" class="w-full rounded-full border-line bg-[#1d1b20] py-1.5 pl-10 pr-4 text-sm text-white placeholder:text-muted focus:border-primary focus:ring-primary" placeholder="搜索节点、任务、服务…" type="search" />
+          </div>
+        </div>
+        <div class="flex items-center gap-3">
+          <button id="refresh-btn" class="icon-btn" title="刷新"><span class="material-symbols-outlined">refresh</span></button>
+          <button id="mode-toggle" class="icon-btn" title="浅色/深色"><span class="material-symbols-outlined">dark_mode</span></button>
+          <button data-switch="join" class="primary-action">接入节点</button>
+        </div>
+      </header>
+
+      <section id="content" class="flex-1 overflow-y-auto p-8"></section>
     </main>
-    <script type="module" src="/src/main.js"></script>
-  </body>
+  </div>
+  <div id="toast-container" class="fixed bottom-6 right-6 z-[80] grid gap-3"></div>
+  <script src="/src/main.js?v=202605131135"></script>
+</body>
 </html>
