@@ -1,1 +1,67 @@
-<div id="root"></div><script type="module" src="/src/main.tsx"></script>
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HMN Web</title>
+    <link rel="stylesheet" href="/src/styles.css" />
+  </head>
+  <body>
+    <main>
+      <aside>
+        <div class="brand"><span>H</span><div><b>HMN Web</b><small>Managed Network Console</small></div></div>
+        <nav>
+          <a class="active">总览</a>
+          <a>节点</a>
+          <a>任务</a>
+          <a>审批</a>
+          <a>网络</a>
+        </nav>
+      </aside>
+      <section class="content">
+        <header class="topbar">
+          <div>
+            <p>借鉴 Komari 的探针视图，但面向 HMN 托管、审批、任务和资产闭环。</p>
+            <h1>节点状态总览</h1>
+          </div>
+          <button>接入新节点</button>
+        </header>
+        <div class="metrics">
+          <section class="metric-card"><div class="metric-icon">↗</div><div><p>在线节点</p><strong>4/5</strong><span>最近 5 分钟心跳</span></div></section>
+          <section class="metric-card"><div class="metric-icon">✓</div><div><p>托管节点</p><strong>4</strong><span>1 个待清理/确认</span></div></section>
+          <section class="metric-card"><div class="metric-icon">!</div><div><p>待审批</p><strong>1</strong><span>高风险动作需确认</span></div></section>
+          <section class="metric-card"><div class="metric-icon">▶</div><div><p>运行任务</p><strong>1</strong><span>worker pull 队列</span></div></section>
+        </div>
+        <div class="layout">
+          <section class="panel wide">
+            <header><h2>节点探针</h2><span>CPU / 内存 / 磁盘 / 心跳</span></header>
+            <div class="nodes" id="nodes"></div>
+          </section>
+          <section class="panel">
+            <header><h2>网络流量</h2><span>聚合视图</span></header>
+            <div class="bar-chart">
+              <i style="height:40%"></i><i style="height:70%"></i><i style="height:52%"></i><i style="height:88%"></i><i style="height:60%"></i><i style="height:95%"></i>
+            </div>
+          </section>
+          <section class="panel">
+            <header><h2>最近任务</h2><span>审批/执行状态</span></header>
+            <div class="tasks">
+              <div class="task"><div><b>heartbeat + facts</b><span>brarm · 2 分钟前</span></div><em>成功</em></div>
+              <div class="task"><div><b>docs sync dry-run</b><span>BeroNas · 5 分钟前</span></div><em>运行中</em></div>
+              <div class="task"><div><b>system upgrade</b><span>worker-d2 · 12 分钟前</span></div><em class="high">待审批</em></div>
+            </div>
+          </section>
+          <section class="panel">
+            <header><h2>容量风险</h2><span>来自 worker facts</span></header>
+            <div class="risk-list">
+              <div><span>BeroNas</span><div class="progress"><i class="amber" style="width:74%"></i></div><b>74%</b></div>
+              <div><span>brarm</span><div class="progress"><i style="width:21%"></i></div><b>21%</b></div>
+              <div><span>worker-d2</span><div class="progress"><i style="width:33%"></i></div><b>33%</b></div>
+            </div>
+          </section>
+        </div>
+      </section>
+    </main>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
