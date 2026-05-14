@@ -1,1 +1,1 @@
-{"scripts":{"dev":"python3 -m http.server 5173 --bind 0.0.0.0","build":"mkdir -p dist && cp -r index.html src dist/","preview":"python3 -m http.server 4173 --bind 0.0.0.0 -d dist"},"dependencies":{},"devDependencies":{}}
+{"scripts":{"dev":"python3 -m http.server 5173 --bind 127.0.0.1","build":"mkdir -p dist && cp -r index.html src dist/","preview":"python3 -m http.server 4173 --bind 127.0.0.1 -d dist"},"dependencies":{},"devDependencies":{}}
